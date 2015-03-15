@@ -1,28 +1,8 @@
 //A binary tree if integers that supports all basic operations.
 #include <stdlib.h>
 #include <stdio.h>
+#include "binary_tree.h"
 
-//structs.
-typedef struct node {
-  int data;
-  struct node *left;
-  struct node *right;
-} node;
-
-typedef struct binary_tree {
-  struct node *head;
-} binary_tree;
-
-//headers.
-node *create_node(int);
-void print_node(node*);
-void delete_node(node*);
-binary_tree *create_tree(int);
-void print_inorder(binary_tree*);
-void print_inorder_helper(node*);
-void delete_binary_tree(binary_tree*);
-
-//implementation.
 node *create_node(int data) {
   node *head = (node*)malloc(sizeof(node));
   head->data = data;
@@ -40,6 +20,8 @@ void delete_node(node *head) {
     free(head);
   }
 }
+
+
 binary_tree *create_tree(int head_data) {
   binary_tree *tree = (binary_tree*)malloc(sizeof(binary_tree));
   tree->head = create_node(head_data);
@@ -64,10 +46,57 @@ void delete_binary_tree(binary_tree *tree) {
   free(tree);
 }
 
+void add(binary_tree *tree, int d) {
+  if(tree->head==NULL) {
+    tree->head = create_node(d);
+  } else {
+    node *walker = tree->head;
+    //Keep looping until you find a place to add.
+    while(1) {
+      if(d < walker->data) {
+	if(walker->left == NULL) {
+	  walker->left = create_node(d);
+	  break;
+	} else {
+	  walker = walker->left;
+	}
+      } else { //d >= walker->data
+	if(walker->right == NULL) {
+	  walker->right = create_node(d);
+	  break;
+	} else {
+	  walker = walker->right;
+	}
+      }
+    }
+  }
+}
+
+int search(binary_tree *tree, int x) {
+  if(tree!=NULL) {
+    node *walker = tree->head;
+    while(walker!=NULL) {
+      if(walker->data == x) {
+	return 1;
+      } else if (x < walker->data) {
+	walker = walker->left;
+      } else {
+	walker = walker->right;
+      }
+    }
+    return 0;
+  }
+  return 0;
+}
+
 int main() {
   binary_tree *tree = create_tree(3);
-  tree->head->left = create_node(2);
-  tree->head->right = create_node(4);
+  add(tree, 2);
+  add(tree, 1);
+  add(tree, 4);
+  add(tree,-1);
+  printf("%d\n", search(tree, 6));
+  printf("%d\n", search(tree, 4));
   print_inorder(tree);
   delete_binary_tree(tree);
 
